@@ -362,6 +362,12 @@ debank_url = f"https://debank.com/profile/{wallet}"
 # Phase 1 carry backtest -- public Dune query behind the 2.11% cross-check.
 backtest_url = "https://dune.com/queries/8163239"
 as_of = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+built_epoch = int(datetime.now(timezone.utc).timestamp())
+# Deep link to the workflow's own Run button. A real in-page trigger would need a
+# GitHub token with `workflow` scope embedded in a PUBLIC page -- i.e. handing
+# anyone write access to the repo -- so this hands off to GitHub's UI instead,
+# where the click is authenticated as whoever is signed in.
+actions_url = "https://github.com/kpk-giel/upshift-lseth-dashboard/actions/workflows/refresh.yml"
 
 html = f"""<title>Upshift lsETH Carry — KPK</title>
 <!-- Reachable by link, not discoverable by search. robots.txt asks crawlers not
@@ -506,6 +512,16 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
     font-family: var(--font-ui);
   }}
   .id-sep {{ color: var(--ink-soft); opacity: 0.5; font-size: 11px; }}
+  .refresh-btn {{
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px;
+    font-size: 11px; font-weight: 500; color: var(--ink-soft);
+    text-decoration: none; white-space: nowrap;
+  }}
+  .refresh-btn:hover {{ color: var(--ink); border-color: var(--ink-soft); }}
+  /* Flag the reading as old rather than letting a stale number look current. The
+     page rebuilds every 4h, so >5h means a run was missed or delayed. */
+  .id-eyebrow.stale {{ color: var(--risk-warn); font-weight: 600; }}
   .id-eyebrow {{
     font-size: 12px;
     font-weight: 500;
@@ -1018,7 +1034,11 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
       <span class="id-sep" aria-hidden="true">·</span>
       <span class="id-wallet"><a href="{debank_url}" target="_blank" rel="noopener">{wallet[:6]}…{wallet[-4:]}</a></span>
       <span class="id-sep" aria-hidden="true">·</span>
-      <span class="id-eyebrow">{as_of}</span>
+      <span class="id-eyebrow" id="asOf" data-built="{built_epoch}">{as_of}</span>
+      <a class="refresh-btn" href="{actions_url}" target="_blank" rel="noopener"
+         title="Rebuilds from live data. Opens the GitHub Actions run page — click 'Run workflow' there, then reload this page in ~1 min.">
+        <span aria-hidden="true">&#8635;</span> Refresh
+      </a>
     </div>
   </header>
 
@@ -1253,6 +1273,25 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   </footer>
 
 </div>
+
+<script>
+(function() {{
+  // Append the reading's age to the timestamp, and mark it if a scheduled rebuild
+  // looks to have been missed. Computed in the viewer's browser because the page
+  // is static -- the build can only stamp when it ran, not how old that is now.
+  var el = document.getElementById('asOf');
+  if (!el) return;
+  var built = parseInt(el.getAttribute('data-built'), 10);
+  if (!built) return;
+  var mins = Math.floor((Date.now() / 1000 - built) / 60);
+  if (mins < 0) return;                       // clock skew; say nothing
+  var age = mins < 60 ? mins + 'm ago'
+    : mins < 1440 ? Math.floor(mins / 60) + 'h ago'
+    : Math.floor(mins / 1440) + 'd ago';
+  el.textContent = el.textContent + ' · ' + age;
+  if (mins > 300) el.classList.add('stale');  // >5h: the 4-hourly run slipped
+}})();
+</script>
 
 <script>
 (function() {{
