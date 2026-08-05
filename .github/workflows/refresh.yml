@@ -1,0 +1,77 @@
+name: Refresh dashboard
+
+# Rebuilds index.html from live Morpho data and commits it. Needs no secrets:
+# both upstream APIs (Morpho GraphQL, DefiLlama yields) are public and keyless.
+on:
+  schedule:
+    # Hourly at :20. Note GitHub may delay scheduled runs under load, and
+    # disables them entirely after 60 days without repo activity -- the commits
+    # this workflow makes count as activity, so it keeps itself alive.
+    - cron: '20 * * * *'
+  workflow_dispatch: {}
+
+# Only the commit needs write access; nothing here reads repo secrets.
+permissions:
+  contents: write
+
+concurrency:
+  # A slow run must never race a later one into the same branch.
+  group: refresh-dashboard
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # No pip install: the build deliberately uses only the stdlib.
+      - name: Build
+        run: python3 build_dashboard.py index.html
+
+      # Same guards as the local cron: a build that "succeeds" but writes a
+      # truncated page would replace a good page with a broken one.
+      - name: Sanity-check the output
+        run: |
+          bytes=$(stat -c %s index.html)
+          if [ "$bytes" -lt 300000 ]; then
+            echo "index.html only ${bytes}B (expected >300KB)" >&2
+            exit 1
+          fi
+          grep -q 'id="ltvSlider"' index.html || { echo "LTV slider missing" >&2; exit 1; }
+          grep -q 'id="spreadBasis"' index.html || { echo "spread picker missing" >&2; exit 1; }
+          echo "ok: ${bytes}B"
+
+      - name: Commit if the data changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Compare with the "As of" timestamp masked out. Every build stamps the
+          # current time, so a plain `git diff` is ALWAYS dirty and would push 24
+          # identical-but-for-the-clock commits a day. Committing only when a rate
+          # actually moved keeps the history meaningful -- and when it does move,
+          # the fresh timestamp goes along with it.
+          mask() { sed -E 's/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} UTC//g' "$1"; }
+          git show HEAD:index.html > /tmp/prev.html 2>/dev/null || : > /tmp/prev.html
+          # ...but commit anyway if the last one is over 6 days old. GitHub
+          # disables scheduled workflows after 60 days with no repo activity, and
+          # these commits ARE the activity -- a long flat stretch would otherwise
+          # switch the schedule off silently.
+          last=$(git log -1 --format=%ct -- index.html 2>/dev/null || echo 0)
+          age_days=$(( ( $(date -u +%s) - last ) / 86400 ))
+          if diff -q <(mask /tmp/prev.html) <(mask index.html) >/dev/null \
+             && [ "$age_days" -lt 6 ]; then
+            echo "data unchanged (last commit ${age_days}d ago), not committing"
+            git checkout -- index.html
+            exit 0
+          fi
+
+          git add index.html
+          git commit -m "Refresh $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
