@@ -1,0 +1,4 @@
+# Reachable by link, but deliberately not indexed: this is a live position
+# dashboard shared directly with counterparties, not a public marketing page.
+User-agent: *
+Disallow: /
