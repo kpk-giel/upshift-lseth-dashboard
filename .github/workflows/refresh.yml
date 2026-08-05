@@ -4,10 +4,12 @@ name: Refresh dashboard
 # both upstream APIs (Morpho GraphQL, DefiLlama yields) are public and keyless.
 on:
   schedule:
-    # Hourly at :20. Note GitHub may delay scheduled runs under load, and
+    # Every 4 hours at :20 (00:20, 04:20, ... UTC). Rates on this market move
+    # slowly -- the borrow leg spanned ~25bps over its first 45 days -- so hourly
+    # was over-sampling. Note GitHub may delay scheduled runs under load, and
     # disables them entirely after 60 days without repo activity -- the commits
     # this workflow makes count as activity, so it keeps itself alive.
-    - cron: '20 * * * *'
+    - cron: '20 */4 * * *'
   workflow_dispatch: {}
 
 # Only the commit needs write access; nothing here reads repo secrets.

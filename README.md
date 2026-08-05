@@ -10,9 +10,9 @@ per 1 lsETH at a chosen LTV, and the full rate history.
 ## How it updates
 
 `index.html` is **generated — do not edit it here.** A GitHub Actions workflow
-(`.github/workflows/refresh.yml`) rebuilds it hourly from live data and commits
-only when a rate actually moved, so the history stays meaningful rather than
-recording one commit per hour. Run it on demand from the Actions tab
+(`.github/workflows/refresh.yml`) rebuilds it every 4 hours from live data and
+commits only when a rate actually moved, so the history stays meaningful rather
+than recording one commit per run. Run it on demand from the Actions tab
 ("Refresh dashboard" → Run workflow).
 
 No secrets or API keys are involved: both upstream sources are public and
