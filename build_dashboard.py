@@ -589,6 +589,12 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   }}
   .pill.good {{ background: var(--good-bg); color: var(--good); }}
   .pill.bad {{ background: var(--bad-bg); color: var(--bad); }}
+  /* "Live pilot" badge in the h1: signals this is a real position running now,
+     while the subhead carries the small-TVL proof-of-concept framing. */
+  .pill.live-pill {{
+    background: var(--good-bg); color: var(--good);
+    vertical-align: middle; margin-left: 8px;
+  }}
 
   .stat-value {{
     font-size: 52px;
@@ -1043,10 +1049,12 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   </header>
 
   <div>
-    <h1>lsETH carry position</h1>
+    <h1>lsETH carry position <span class="pill live-pill">● live pilot</span></h1>
     <div class="subhead">
       Borrow USDC against lsETH on Morpho, redeploy it into KPK USDC Morpho
       vaults, and keep the spread — extra yield on lsETH you were holding anyway.
+      Running live since 4 Aug 2026 as a small proof-of-concept position, at
+      {ltv:.0f}% LTV — the top of the pre-automation band.
     </div>
   </div>
 
@@ -1175,16 +1183,16 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
     <div class="callout-mark" aria-hidden="true">!</div>
     <div>
       <div class="callout-title">
-        Today's {ltv:.0f}% LTV is deliberately conservative — read it as a floor,
-        not a cap
+        Running at {ltv:.0f}% LTV — the top of the pre-automation band; ~75% is next
       </div>
       <div class="callout-body">
-        The position is run well below target while the rebalancing and
-        anti-liquidation automations — already live — are finetuned. The intended
-        range is <b>60–65%</b> as that tuning settles, rising to <b>~75%</b> once
-        they have a longer track record. At 75% on the 30-day spread the same
-        structure yields <b>+{carry_at_target:.2f}%</b> — drag the slider above to
-        see any point in between.
+        The position is held in band automatically: live rebalancing and
+        anti-liquidation automations re-lever on strength and de-risk on weakness
+        around this level. As they build a longer track record the target moves to
+        <b>~75%</b>, where the same structure yields <b>+{carry_at_target:.2f}%</b>
+        on the current spread — drag the slider above to see any point in between.
+        Position size is a deliberately small pilot: the strategy's economics are a
+        rate and scale linearly with TVL.
       </div>
     </div>
   </div>
@@ -1233,7 +1241,7 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   </div>
 
   <details class="chart-table">
-    <summary>Show actual live position ({coll['amount']:.2f} lsETH)</summary>
+    <summary>Show actual live position — {coll['amount']:.2f} lsETH pilot</summary>
     <div class="table-scroll">
       <table class="data">
         <thead><tr><th>Leg</th><th>Amount</th><th>USD</th><th>APY</th></tr></thead>
@@ -1318,9 +1326,13 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
     // liquidation threshold is instead the red end of the track itself, labelled
     // once to the right of the scale.
     {{ ltv: LIVE_LTV, label: 'live ' + LIVE_LTV.toFixed(0) + '%' }},
-    {{ ltv: 62.5, label: 'safe 60–65%', optional: true }},
+    {{ ltv: 62.5, label: 'band 60–65%', optional: true }},
     {{ ltv: 75, label: 'target 75%', emphasis: true }}
-  ];
+  ].filter(function(m) {{
+    // Drop the band marker when the live mark sits on top of it (the position now
+    // runs inside the band, so the two labels would overlap and say the same thing).
+    return !(m.optional && Math.abs(m.ltv - LIVE_LTV) < 6);
+  }});
   var scale = document.getElementById('ltvScale');
   var markEls = [];
   MARKS.forEach(function(m) {{
