@@ -686,7 +686,7 @@
       <span class="id-sep" aria-hidden="true">·</span>
       <span class="id-wallet"><a href="https://debank.com/profile/0x15d869A5a117480FF219d6dC62a42C794cbAcCba" target="_blank" rel="noopener">0x15d8…cCba</a></span>
       <span class="id-sep" aria-hidden="true">·</span>
-      <span class="id-eyebrow" id="asOf" data-built="1786381997">2026-08-10 17:13 UTC</span>
+      <span class="id-eyebrow" id="asOf" data-built="1786384434">2026-08-10 17:53 UTC</span>
       <a class="refresh-btn" href="https://github.com/kpk-giel/upshift-lseth-dashboard/actions/workflows/refresh.yml" target="_blank" rel="noopener"
          title="Rebuilds from live data. Opens the GitHub Actions run page — click 'Run workflow' there, then reload this page in ~1 min.">
         <span aria-hidden="true">&#8635;</span> Refresh
@@ -707,7 +707,7 @@
   <div class="hero">
     <div class="card">
       <div class="stat-label">Carry on top of lsETH <span class="pill good" id="carryPill">↑ carry positive</span></div>
-      <div class="stat-value good" id="heroCarry">+1.74%</div>
+      <div class="stat-value good" id="heroCarry">+1.68%</div>
       <div class="stat-note">
         What 1 lsETH earns <b>in addition to</b> its own staking yield, by borrowing
         USDC against it at <b id="heroLtv">65%</b> LTV and lending that USDC
@@ -718,16 +718,16 @@
       <div class="mini-stat">
         <span class="label">
           Spread: lend rate − borrow rate
-          <em class="sublabel" id="spreadBasisTop">30d avg (trailing)</em>
+          <em class="sublabel" id="spreadBasisTop">7d avg (trailing)</em>
         </span>
-        <span class="value" style="color:var(--good)" id="spreadTop">+2.97 pp</span>
+        <span class="value" style="color:var(--good)" id="spreadTop">+2.87 pp</span>
       </div>
       <div class="mini-stat">
         <span class="label">
           Total APY on lsETH
-          <em class="sublabel">2.33% staking + <span id="carryPart">1.74</span>% carry</em>
+          <em class="sublabel">2.33% staking + <span id="carryPart">1.68</span>% carry</em>
         </span>
-        <span class="value" style="color:var(--good)" id="totalApy">4.07%</span>
+        <span class="value" style="color:var(--good)" id="totalApy">4.01%</span>
       </div>
     </div>
   </div>
@@ -738,7 +738,7 @@
       <div class="leg collateral">
         <div class="leg-kind">Collateral</div>
         <div class="leg-amount">1.000 lsETH</div>
-        <div class="leg-usd">$2,085</div>
+        <div class="leg-usd">$2,091</div>
       </div>
       <div class="arrow">→</div>
       <div class="leg borrow">
@@ -752,7 +752,7 @@
         <div class="leg-kind">Deposit · <a href="https://app.morpho.org/ethereum/vault/0xD5cCe260E7a755DDf0Fb9cdF06443d593AaeaA13" target="_blank" rel="noopener">KPK USDC Yield ↗</a></div>
         <div class="leg-amount"><span id="perUnitDeposit">1,361</span> USDC</div>
         <div class="leg-usd">redeployed in full</div>
-        <div class="leg-apy">+5.56% earned (spot, net of fees)</div>
+        <div class="leg-apy">+5.54% earned (spot, net of fees)</div>
       </div>
     </div>
     <div class="per-unit-note">
@@ -760,22 +760,22 @@
       with comparable 86%-LLTV USDC markets such as wstETH/USDC and rETH/USDC.
       The working below follows whichever spread you pick in the simulator.
       Scales linearly: 1 lsETH or 10,000 lsETH earns the same percentage.
-      lsETH marked at $2,085 by the market's oracle.
+      lsETH marked at $2,091 by the market's oracle.
     </div>
   </div>
 
   <div class="math">
-    <div class="chunk"><span class="term" style="color:var(--accent-yield)" id="mathYield">6.93%</span><span class="sub" id="mathYieldSub">Yield, 30d avg</span></div>
+    <div class="chunk"><span class="term" style="color:var(--accent-yield)" id="mathYield">6.77%</span><span class="sub" id="mathYieldSub">Yield, 7d avg</span></div>
     <span class="op">−</span>
-    <div class="chunk"><span class="term" style="color:var(--accent-borrow)" id="mathBorrow">3.97%</span><span class="sub" id="mathBorrowSub">Borrow, 30d avg</span></div>
+    <div class="chunk"><span class="term" style="color:var(--accent-borrow)" id="mathBorrow">3.89%</span><span class="sub" id="mathBorrowSub">Borrow, 7d avg</span></div>
     <span class="op">=</span>
-    <div class="chunk"><span class="term" id="mathDelta">2.97 pp</span><span class="sub">Delta APY</span></div>
+    <div class="chunk"><span class="term" id="mathDelta">2.87 pp</span><span class="sub">Delta APY</span></div>
     <span class="op">×</span>
     <div class="chunk"><span class="term" id="mathLtv">65%</span><span class="sub">LTV</span></div>
     <span class="op">×</span>
     <div class="chunk"><span class="term">0.9</span><span class="sub">After 10% fee</span></div>
     <span class="op">=</span>
-    <div class="chunk"><span class="term" style="color:var(--good)" id="mathCarry">+1.74%</span><span class="sub">Carry on lsETH</span></div>
+    <div class="chunk"><span class="term" style="color:var(--good)" id="mathCarry">+1.68%</span><span class="sub">Carry on lsETH</span></div>
   </div>
 
   <div class="card ltv-panel">
@@ -787,16 +787,16 @@
         </div>
       </div>
       <div class="ltv-readout">
-        <span class="big" id="sliderCarry">+1.74%</span>
-        <span class="unit">on lsETH, after fee<br>at <span id="spreadBasis">30d avg</span> spread</span>
+        <span class="big" id="sliderCarry">+1.68%</span>
+        <span class="unit">on lsETH, after fee<br>at <span id="spreadBasis">7d avg</span> spread</span>
       </div>
     </div>
 
     <div class="spread-picker" role="group" aria-label="Which spread to simulate with">
       <span class="picker-label">Spread</span>
-      <button type="button" class="spread-btn" data-spread="1.746554" data-yield="5.555360" data-borrow="3.808806" aria-current="false"><i>Live</i><b>+1.75 pp</b></button>
-<button type="button" class="spread-btn" data-spread="2.872632" data-yield="6.766051" data-borrow="3.893419" aria-current="false"><i>7d avg</i><b>+2.87 pp</b></button>
-<button type="button" class="spread-btn" data-spread="2.966928" data-yield="6.934677" data-borrow="3.967748" aria-current="true"><i>30d avg</i><b>+2.97 pp</b></button>
+      <button type="button" class="spread-btn" data-spread="1.726538" data-yield="5.535344" data-borrow="3.808806" aria-current="false"><i>Live</i><b>+1.73 pp</b></button>
+<button type="button" class="spread-btn" data-spread="2.872632" data-yield="6.766051" data-borrow="3.893419" aria-current="true"><i>7d avg</i><b>+2.87 pp</b></button>
+<button type="button" class="spread-btn" data-spread="2.966928" data-yield="6.934677" data-borrow="3.967748" aria-current="false"><i>30d avg</i><b>+2.97 pp</b></button>
       <span class="picker-note">
         <b>Live</b> is the forward-looking basis. The trailing options are a reality
         check on it, each pairing the vault's realized net APY with the borrow rate
@@ -843,7 +843,7 @@
         The position is held in band automatically: live rebalancing and
         anti-liquidation automations re-lever on strength and de-risk on weakness
         around this level. As they build a longer track record the target moves to
-        <b>~75%</b>, where the same structure yields <b>+2.00%</b>
+        <b>~75%</b>, where the same structure yields <b>+1.94%</b>
         on the current spread — drag the slider above to see any point in between.
         Position size is a deliberately small pilot: the carry is a percentage, so
         it is the same at this size or at scale.
@@ -927,12 +927,12 @@
       <table class="data">
         <thead><tr><th>Leg</th><th>Amount</th><th>USD</th><th>APY</th></tr></thead>
         <tbody>
-          <tr><td>Collateral · lsETH</td><td>14.4668</td><td>$30,165</td><td>—</td></tr>
+          <tr><td>Collateral · lsETH</td><td>14.4668</td><td>$30,252</td><td>—</td></tr>
           <tr><td>Borrow · USDC</td><td>19,694.37</td><td>$19,690</td><td>3.81%</td></tr>
-          <tr><td>Deposit · KPK USDC Yield</td><td>19,700.35</td><td>$19,693</td><td>5.56%</td></tr>
-          <tr><td>Live LTV</td><td>65.27%</td><td>—</td><td>—</td></tr>
-          <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+1.14%</td></tr>
-          <tr><td>Carry at live LTV, net of 10% fee</td><td>—</td><td>—</td><td>+1.74%</td></tr>
+          <tr><td>Deposit · KPK USDC Yield</td><td>19,700.43</td><td>$19,693</td><td>5.54%</td></tr>
+          <tr><td>Live LTV</td><td>65.09%</td><td>—</td><td>—</td></tr>
+          <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+1.12%</td></tr>
+          <tr><td>Carry at live LTV, net of 10% fee</td><td>—</td><td>—</td><td>+1.68%</td></tr>
         </tbody>
       </table>
     </div>
@@ -1036,8 +1036,8 @@
   // LTV sensitivity. Carry = spread x LTV, with the spread held at its live
   // value -- see the on-page caveat: real spreads compress as LTV rises, so the
   // high end is an upper bound.
-  var SPREAD = 2.966928;   // mutable: the spread picker reassigns this
-  var LIVE_LTV = 65.2746;
+  var SPREAD = 2.872632;   // mutable: the spread picker reassigns this
+  var LIVE_LTV = 65.0865;
   var LLTV = 86.00;
   // Must match the CSS gradient stops. Four bands: green to SAFE_MAX, olive
   // through the 75% operating target, orange above it, red near liquidation.
@@ -1123,7 +1123,7 @@
     document.getElementById('mathCarry').textContent = txt;
     document.getElementById('perUnitLtv').textContent = ltv.toFixed(0);
 
-    var perUnit = 2085.1079 * ltv / 100;
+    var perUnit = 2091.1188 * ltv / 100;
     var money = perUnit.toLocaleString(undefined, { maximumFractionDigits: 0 });
     document.getElementById('perUnitBorrow').textContent = money;
     document.getElementById('perUnitDeposit').textContent = money;

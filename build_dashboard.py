@@ -280,11 +280,13 @@ _SPREAD_LABELS = [
     ("30d", "30d avg"),
 ]
 _available_spreads = [(k, lbl) for k, lbl in _SPREAD_LABELS if spreads.get(k) is not None]
-# Default to the 30-day basis for the headline: the instantaneous vault rate can
+# Default to a trailing basis for the headline: the instantaneous vault rate can
 # swing close to a point within an hour (observed 6.41% -> 5.55% in 8 minutes on
 # 2026-08-10), which makes the live print a poor first impression for an external
-# reader. Live stays one click away and is still the operationally-governed rate.
-_default_basis = "30d" if spreads.get("30d") is not None else "spot"
+# reader. 7d over 30d (Giel's call, 2026-08-10): the position is days old and its
+# market is weeks old, so a 30d window leans on rates from before the position
+# existed. Live stays one click away and is still the operationally-governed rate.
+_default_basis = "7d" if spreads.get("7d") is not None else "spot"
 legs_by_horizon = data["legs_by_horizon"]
 utilization_pct = data.get("utilization_pct") or 0.0
 
