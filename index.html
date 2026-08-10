@@ -686,7 +686,7 @@
       <span class="id-sep" aria-hidden="true">·</span>
       <span class="id-wallet"><a href="https://debank.com/profile/0x15d869A5a117480FF219d6dC62a42C794cbAcCba" target="_blank" rel="noopener">0x15d8…cCba</a></span>
       <span class="id-sep" aria-hidden="true">·</span>
-      <span class="id-eyebrow" id="asOf" data-built="1786381605">2026-08-10 17:06 UTC</span>
+      <span class="id-eyebrow" id="asOf" data-built="1786381997">2026-08-10 17:13 UTC</span>
       <a class="refresh-btn" href="https://github.com/kpk-giel/upshift-lseth-dashboard/actions/workflows/refresh.yml" target="_blank" rel="noopener"
          title="Rebuilds from live data. Opens the GitHub Actions run page — click 'Run workflow' there, then reload this page in ~1 min.">
         <span aria-hidden="true">&#8635;</span> Refresh
@@ -752,7 +752,7 @@
         <div class="leg-kind">Deposit · <a href="https://app.morpho.org/ethereum/vault/0xD5cCe260E7a755DDf0Fb9cdF06443d593AaeaA13" target="_blank" rel="noopener">KPK USDC Yield ↗</a></div>
         <div class="leg-amount"><span id="perUnitDeposit">1,361</span> USDC</div>
         <div class="leg-usd">redeployed in full</div>
-        <div class="leg-apy">+5.61% earned (spot, net of fees)</div>
+        <div class="leg-apy">+5.56% earned (spot, net of fees)</div>
       </div>
     </div>
     <div class="per-unit-note">
@@ -794,7 +794,7 @@
 
     <div class="spread-picker" role="group" aria-label="Which spread to simulate with">
       <span class="picker-label">Spread</span>
-      <button type="button" class="spread-btn" data-spread="1.800242" data-yield="5.609048" data-borrow="3.808806" aria-current="false"><i>Live</i><b>+1.80 pp</b></button>
+      <button type="button" class="spread-btn" data-spread="1.746554" data-yield="5.555360" data-borrow="3.808806" aria-current="false"><i>Live</i><b>+1.75 pp</b></button>
 <button type="button" class="spread-btn" data-spread="2.872632" data-yield="6.766051" data-borrow="3.893419" aria-current="false"><i>7d avg</i><b>+2.87 pp</b></button>
 <button type="button" class="spread-btn" data-spread="2.966928" data-yield="6.934677" data-borrow="3.967748" aria-current="true"><i>30d avg</i><b>+2.97 pp</b></button>
       <span class="picker-note">
@@ -928,10 +928,10 @@
         <thead><tr><th>Leg</th><th>Amount</th><th>USD</th><th>APY</th></tr></thead>
         <tbody>
           <tr><td>Collateral · lsETH</td><td>14.4668</td><td>$30,165</td><td>—</td></tr>
-          <tr><td>Borrow · USDC</td><td>19,694.37</td><td>$19,691</td><td>3.81%</td></tr>
-          <tr><td>Deposit · KPK USDC Yield</td><td>19,700.34</td><td>$19,694</td><td>5.61%</td></tr>
-          <tr><td>Live LTV</td><td>65.28%</td><td>—</td><td>—</td></tr>
-          <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+1.18%</td></tr>
+          <tr><td>Borrow · USDC</td><td>19,694.37</td><td>$19,690</td><td>3.81%</td></tr>
+          <tr><td>Deposit · KPK USDC Yield</td><td>19,700.35</td><td>$19,693</td><td>5.56%</td></tr>
+          <tr><td>Live LTV</td><td>65.27%</td><td>—</td><td>—</td></tr>
+          <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+1.14%</td></tr>
           <tr><td>Carry at live LTV, net of 10% fee</td><td>—</td><td>—</td><td>+1.74%</td></tr>
         </tbody>
       </table>
@@ -1037,7 +1037,7 @@
   // value -- see the on-page caveat: real spreads compress as LTV rises, so the
   // high end is an upper bound.
   var SPREAD = 2.966928;   // mutable: the spread picker reassigns this
-  var LIVE_LTV = 65.2772;
+  var LIVE_LTV = 65.2746;
   var LLTV = 86.00;
   // Must match the CSS gradient stops. Four bands: green to SAFE_MAX, olive
   // through the 75% operating target, orange above it, red near liquidation.
