@@ -1191,8 +1191,8 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
         around this level. As they build a longer track record the target moves to
         <b>~75%</b>, where the same structure yields <b>+{carry_at_target:.2f}%</b>
         on the current spread — drag the slider above to see any point in between.
-        Position size is a deliberately small pilot: the strategy's economics are a
-        rate and scale linearly with TVL.
+        Position size is a deliberately small pilot: the carry is a percentage, so
+        it is the same at this size or at scale.
       </div>
     </div>
   </div>
@@ -1250,13 +1250,14 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
           <tr><td>Borrow · USDC</td><td>{borrow['amount']:,.2f}</td><td>${borrow['usd']:,.0f}</td><td>{borrow['apy_pct']:.2f}%</td></tr>
           <tr><td>Deposit · KPK USDC Yield</td><td>{dep['amount']:,.2f}</td><td>${dep['usd']:,.0f}</td><td>{dep['apy_pct']:.2f}%</td></tr>
           <tr><td>Live LTV</td><td>{ltv:.2f}%</td><td>—</td><td>—</td></tr>
-          <tr><td>Carry at live LTV</td><td>—</td><td>—</td><td>+{net_lseth:.2f}%</td></tr>
+          <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+{net_lseth:.2f}%</td></tr>
+          <tr><td>Carry at live LTV, net of 10% fee</td><td>—</td><td>—</td><td>+{net_lseth_after_fee:.2f}%</td></tr>
         </tbody>
       </table>
     </div>
     <div class="per-unit-note">
-      {position_age_note} Sizing is a deliberately small pilot — the strategy's
-      economics are a rate and don't depend on it.
+      {position_age_note} Sizing is a deliberately small pilot: the carry is a
+      percentage, so the return is the same at this size or at scale.
       Verify the collateral and borrow legs on
       <a href="{debank_url}" target="_blank" rel="noopener">DeBank ↗</a>
       — it shows both positions, but not the underlying yield.
