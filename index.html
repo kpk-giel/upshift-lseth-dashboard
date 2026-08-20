@@ -686,7 +686,7 @@
       <span class="id-sep" aria-hidden="true">·</span>
       <span class="id-wallet"><a href="https://debank.com/profile/0x15d869A5a117480FF219d6dC62a42C794cbAcCba" target="_blank" rel="noopener">0x15d8…cCba</a></span>
       <span class="id-sep" aria-hidden="true">·</span>
-      <span class="id-eyebrow" id="asOf" data-built="1787172539">2026-08-19 20:48 UTC</span>
+      <span class="id-eyebrow" id="asOf" data-built="1787190913">2026-08-20 01:55 UTC</span>
       <a class="refresh-btn" href="https://github.com/kpk-giel/upshift-lseth-dashboard/actions/workflows/refresh.yml" target="_blank" rel="noopener"
          title="Rebuilds from live data. Opens the GitHub Actions run page — click 'Run workflow' there, then reload this page in ~1 min.">
         <span aria-hidden="true">&#8635;</span> Refresh
@@ -707,7 +707,7 @@
   <div class="hero">
     <div class="card">
       <div class="stat-label">Carry on top of lsETH <span class="pill good" id="carryPill">↑ carry positive</span></div>
-      <div class="stat-value good" id="heroCarry">+2.06%</div>
+      <div class="stat-value good" id="heroCarry">+2.20%</div>
       <div class="stat-note">
         What 1 lsETH earns <b>in addition to</b> its own staking yield, by borrowing
         USDC against it at <b id="heroLtv">64%</b> LTV and lending that USDC
@@ -720,14 +720,14 @@
           Spread: lend rate − borrow rate
           <em class="sublabel" id="spreadBasisTop">7d avg (trailing)</em>
         </span>
-        <span class="value" style="color:var(--good)" id="spreadTop">+3.60 pp</span>
+        <span class="value" style="color:var(--good)" id="spreadTop">+3.83 pp</span>
       </div>
       <div class="mini-stat">
         <span class="label">
           Total APY on lsETH
-          <em class="sublabel">1.74% staking + <span id="carryPart">2.06</span>% carry</em>
+          <em class="sublabel">1.74% staking + <span id="carryPart">2.20</span>% carry</em>
         </span>
-        <span class="value" style="color:var(--good)" id="totalApy">3.81%</span>
+        <span class="value" style="color:var(--good)" id="totalApy">3.94%</span>
       </div>
     </div>
   </div>
@@ -738,21 +738,21 @@
       <div class="leg collateral">
         <div class="leg-kind">Collateral</div>
         <div class="leg-amount">1.000 lsETH</div>
-        <div class="leg-usd">$2,372</div>
+        <div class="leg-usd">$2,525</div>
       </div>
       <div class="arrow">→</div>
       <div class="leg borrow">
         <div class="leg-kind">Borrow · <a href="https://app.morpho.org/ethereum/market/0xfb7d54e0ce71efc8fffd3f4e1db0afa9265882da5cc76604b62adfac64501e80/lseth-usdc" target="_blank" rel="noopener">lsETH/USDC market ↗</a></div>
-        <div class="leg-amount"><span id="perUnitBorrow">1,510</span> USDC</div>
+        <div class="leg-amount"><span id="perUnitBorrow">1,612</span> USDC</div>
         <div class="leg-usd">at <span id="perUnitLtv">64</span>% LTV</div>
-        <div class="leg-apy">−3.61% paid (spot rate)</div>
+        <div class="leg-apy">−3.63% paid (spot rate)</div>
       </div>
       <div class="arrow">→</div>
       <div class="leg yield">
         <div class="leg-kind">Deposit · <a href="https://app.morpho.org/ethereum/vault/0xD5cCe260E7a755DDf0Fb9cdF06443d593AaeaA13" target="_blank" rel="noopener">KPK USDC Yield ↗</a></div>
-        <div class="leg-amount"><span id="perUnitDeposit">1,510</span> USDC</div>
+        <div class="leg-amount"><span id="perUnitDeposit">1,612</span> USDC</div>
         <div class="leg-usd">redeployed in full</div>
-        <div class="leg-apy">+9.05% earned (spot, net of fees)</div>
+        <div class="leg-apy">+6.25% earned (spot, net of fees)</div>
       </div>
     </div>
     <div class="per-unit-note">
@@ -760,22 +760,22 @@
       with comparable 86%-LLTV USDC markets such as wstETH/USDC and rETH/USDC.
       The working below follows whichever spread you pick in the simulator.
       Scales linearly: 1 lsETH or 10,000 lsETH earns the same percentage.
-      lsETH marked at $2,372 by the market's oracle.
+      lsETH marked at $2,525 by the market's oracle.
     </div>
   </div>
 
   <div class="math">
-    <div class="chunk"><span class="term" style="color:var(--accent-yield)" id="mathYield">7.26%</span><span class="sub" id="mathYieldSub">Yield, 7d avg</span></div>
+    <div class="chunk"><span class="term" style="color:var(--accent-yield)" id="mathYield">7.49%</span><span class="sub" id="mathYieldSub">Yield, 7d avg</span></div>
     <span class="op">−</span>
-    <div class="chunk"><span class="term" style="color:var(--accent-borrow)" id="mathBorrow">3.66%</span><span class="sub" id="mathBorrowSub">Borrow, 7d avg</span></div>
+    <div class="chunk"><span class="term" style="color:var(--accent-borrow)" id="mathBorrow">3.67%</span><span class="sub" id="mathBorrowSub">Borrow, 7d avg</span></div>
     <span class="op">=</span>
-    <div class="chunk"><span class="term" id="mathDelta">3.60 pp</span><span class="sub">Delta APY</span></div>
+    <div class="chunk"><span class="term" id="mathDelta">3.83 pp</span><span class="sub">Delta APY</span></div>
     <span class="op">×</span>
     <div class="chunk"><span class="term" id="mathLtv">64%</span><span class="sub">LTV</span></div>
     <span class="op">×</span>
     <div class="chunk"><span class="term">0.9</span><span class="sub">After 10% fee</span></div>
     <span class="op">=</span>
-    <div class="chunk"><span class="term" style="color:var(--good)" id="mathCarry">+2.06%</span><span class="sub">Carry on lsETH</span></div>
+    <div class="chunk"><span class="term" style="color:var(--good)" id="mathCarry">+2.20%</span><span class="sub">Carry on lsETH</span></div>
   </div>
 
   <div class="card ltv-panel">
@@ -787,16 +787,16 @@
         </div>
       </div>
       <div class="ltv-readout">
-        <span class="big" id="sliderCarry">+2.06%</span>
+        <span class="big" id="sliderCarry">+2.20%</span>
         <span class="unit">on lsETH, after fee<br>at <span id="spreadBasis">7d avg</span> spread</span>
       </div>
     </div>
 
     <div class="spread-picker" role="group" aria-label="Which spread to simulate with">
       <span class="picker-label">Spread</span>
-      <button type="button" class="spread-btn" data-spread="5.437651" data-yield="9.052638" data-borrow="3.614986" aria-current="false"><i>Live</i><b>+5.44 pp</b></button>
-<button type="button" class="spread-btn" data-spread="3.599340" data-yield="7.264211" data-borrow="3.664871" aria-current="true"><i>7d avg</i><b>+3.60 pp</b></button>
-<button type="button" class="spread-btn" data-spread="2.998043" data-yield="6.870999" data-borrow="3.872956" aria-current="false"><i>30d avg</i><b>+3.00 pp</b></button>
+      <button type="button" class="spread-btn" data-spread="2.615179" data-yield="6.247829" data-borrow="3.632650" aria-current="false"><i>Live</i><b>+2.62 pp</b></button>
+<button type="button" class="spread-btn" data-spread="3.825375" data-yield="7.493171" data-borrow="3.667796" aria-current="true"><i>7d avg</i><b>+3.83 pp</b></button>
+<button type="button" class="spread-btn" data-spread="2.999965" data-yield="6.870999" data-borrow="3.871035" aria-current="false"><i>30d avg</i><b>+3.00 pp</b></button>
       <span class="picker-note">
         <b>Live</b> is the forward-looking basis. The trailing options are a reality
         check on it, each pairing the vault's realized net APY with the borrow rate
@@ -843,7 +843,7 @@
         The position is held in band automatically: live rebalancing and
         anti-liquidation automations re-lever on strength and de-risk on weakness
         around this level. As they build a longer track record the target moves to
-        <b>~75%</b>, where the same structure yields <b>+2.43%</b>
+        <b>~75%</b>, where the same structure yields <b>+2.58%</b>
         on the current spread — drag the slider above to see any point in between.
         Position size is a deliberately small pilot: the carry is a percentage, so
         it is the same at this size or at scale.
@@ -897,18 +897,18 @@
 <line x1="44" y1="16.0" x2="830" y2="16.0" class="chart-grid"/><text x="36" y="16.0" class="chart-ytick" text-anchor="end" dominant-baseline="middle">14%</text></g>
       <g><text x="44.0" y="288.0" class="chart-xtick" text-anchor="middle">Jun 23</text>
 <text x="240.5" y="288.0" class="chart-xtick" text-anchor="middle">Jul 7</text>
-<text x="437.0" y="288.0" class="chart-xtick" text-anchor="middle">Jul 21</text>
+<text x="437.0" y="288.0" class="chart-xtick" text-anchor="middle">Jul 22</text>
 <text x="633.5" y="288.0" class="chart-xtick" text-anchor="middle">Aug 5</text>
-<text x="830.0" y="288.0" class="chart-xtick" text-anchor="middle">Aug 19</text></g>
-      <g class="chart-entry"><rect x="44" y="16" width="579.5" height="254" class="chart-preentry"/><line x1="623.5" y1="16" x2="623.5" y2="270" class="chart-entryline"/><text x="629.5" y="262.0" text-anchor="start" class="chart-entrylabel">◀ before position · position opened Aug 4</text></g>
+<text x="830.0" y="288.0" class="chart-xtick" text-anchor="middle">Aug 20</text></g>
+      <g class="chart-entry"><rect x="44" y="16" width="577.4" height="254" class="chart-preentry"/><line x1="621.4" y1="16" x2="621.4" y2="270" class="chart-entryline"/><text x="627.4" y="262.0" text-anchor="start" class="chart-entrylabel">◀ before position · position opened Aug 4</text></g>
       <g class="chart-annot"><line x1="44.0" y1="16.0" x2="44.0" y2="26.0" stroke="var(--ink-soft)" stroke-width="1"/><text x="48.0" y="12.0" text-anchor="start">4 day(s) above 14% (Jun 23–Aug 18), peak 25% — single-day spikes in share-price-derived APY; capped for readability</text></g>
-      <path d="M44.0,199.2 L57.6,196.5 L71.2,196.5 L84.8,196.5 L98.4,196.5 L111.9,196.5 L125.5,196.5 L139.1,196.7 L152.7,196.8 L166.3,196.8 L179.9,196.8 L193.5,196.8 L207.1,196.8 L220.7,196.9 L234.3,196.9 L247.8,196.9 L261.4,196.9 L275.0,196.9 L288.6,197.0 L302.2,197.0 L315.8,197.0 L329.4,197.0 L343.0,197.0 L356.6,197.0 L370.2,197.1 L383.7,197.1 L397.3,197.1 L410.9,197.1 L424.5,197.1 L438.1,197.2 L451.7,197.2 L465.3,197.2 L478.9,197.2 L492.5,197.2 L506.1,197.3 L519.6,197.3 L533.2,197.3 L546.8,197.3 L560.4,197.3 L574.0,197.4 L587.6,197.4 L601.2,197.4 L614.8,197.4 L628.4,200.9 L642.0,201.1 L655.5,201.3 L669.1,201.6 L682.7,201.8 L696.3,202.0 L709.9,200.9 L723.5,203.1 L737.1,203.3 L750.7,203.5 L764.3,204.4 L777.9,204.6 L791.4,203.8 L805.0,203.9 L818.6,204.0 L830.0,204.4" fill="none" stroke="var(--chart-borrow)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-      <path d="M44.0,16.0 L57.6,122.1 L71.2,145.0 L84.8,77.2 L98.4,112.5 L111.9,69.5 L125.5,135.7 L139.1,16.0 L152.7,133.4 L166.3,151.5 L179.9,151.7 L193.5,151.3 L207.1,153.3 L220.7,156.8 L234.3,160.0 L247.8,154.7 L261.4,151.5 L275.0,145.6 L288.6,146.9 L302.2,97.3 L315.8,135.1 L329.4,151.0 L343.0,137.1 L356.6,141.7 L370.2,16.0 L383.7,139.8 L397.3,142.7 L410.9,152.6 L424.5,150.2 L438.1,150.1 L451.7,163.2 L465.3,166.2 L478.9,148.5 L492.5,156.1 L506.1,155.4 L519.6,146.7 L533.2,134.3 L546.8,152.5 L560.4,151.8 L574.0,156.8 L587.6,149.6 L601.2,155.6 L614.8,156.7 L628.4,151.4 L642.0,160.6 L655.5,154.4 L669.1,153.8 L682.7,135.2 L696.3,154.6 L709.9,150.0 L723.5,135.4 L737.1,154.4 L750.7,125.0 L764.3,154.0 L777.9,138.7 L791.4,146.2 L805.0,16.0 L818.6,148.3" fill="none" stroke="var(--chart-yield)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-      <path d="M44.0,148.8 L57.6,146.7 L71.2,146.5 L84.8,144.4 L98.4,142.9 L111.9,141.5 L125.5,140.2 L139.1,137.2 L152.7,135.5 L166.3,134.8 L179.9,134.3 L193.5,133.5 L207.1,133.1 L220.7,132.1 L234.3,131.6 L247.8,131.2 L261.4,130.4 L275.0,130.6 L288.6,131.4 L302.2,130.6 L315.8,130.2 L329.4,130.3 L343.0,130.4 L356.6,130.4 L370.2,128.1 L383.7,126.8 L397.3,126.0 L410.9,125.5 L424.5,125.1 L438.1,124.6 L451.7,131.6 L465.3,134.0 L478.9,133.8 L492.5,135.9 L506.1,137.1 L519.6,137.5 L533.2,139.1 L546.8,141.8 L560.4,143.4 L574.0,143.5 L587.6,143.8 L601.2,144.2 L614.8,144.0 L628.4,143.7 L642.0,143.5 L655.5,143.0 L669.1,142.5 L682.7,142.6 L696.3,142.8 L709.9,144.2 L723.5,145.0 L737.1,145.2 L750.7,145.5 L764.3,146.0 L777.9,148.0 L791.4,148.7 L805.0,147.4 L818.6,146.9" fill="none" stroke="var(--chart-yield)" stroke-width="1.25" stroke-dasharray="5 4" opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>
-      <circle cx="830.0" cy="204.4" r="4" fill="var(--chart-borrow)" stroke="var(--surface)" stroke-width="2"/>
-      <circle cx="818.6" cy="148.3" r="4" fill="var(--chart-yield)" stroke="var(--surface)" stroke-width="2"/>
-      <text x="822.0" y="204.4" text-anchor="end" dominant-baseline="middle" class="chart-endlabel" fill="var(--chart-borrow)">3.61%</text>
-      <text x="810.6" y="148.3" text-anchor="end" dominant-baseline="middle" class="chart-endlabel" fill="var(--chart-yield)">6.71%</text>
+      <path d="M44.0,199.2 L57.5,196.5 L71.1,196.5 L84.6,196.5 L98.2,196.5 L111.7,196.5 L125.2,196.5 L138.8,196.7 L152.3,196.8 L165.9,196.8 L179.4,196.8 L193.0,196.8 L206.5,196.8 L220.0,196.9 L233.6,196.9 L247.1,196.9 L260.7,196.9 L274.2,196.9 L287.7,197.0 L301.3,197.0 L314.8,197.0 L328.4,197.0 L341.9,197.0 L355.4,197.0 L369.0,197.1 L382.5,197.1 L396.1,197.1 L409.6,197.1 L423.1,197.1 L436.7,197.2 L450.2,197.2 L463.8,197.2 L477.3,197.2 L490.9,197.2 L504.4,197.3 L517.9,197.3 L531.5,197.3 L545.0,197.3 L558.6,197.3 L572.1,197.4 L585.6,197.4 L599.2,197.4 L612.7,197.4 L626.3,200.9 L639.8,201.1 L653.3,201.3 L666.9,201.6 L680.4,201.8 L694.0,202.0 L707.5,200.9 L721.1,203.1 L734.6,203.3 L748.1,203.5 L761.7,204.4 L775.2,204.6 L788.8,203.8 L802.3,203.9 L815.8,204.0 L829.4,204.1 L830.0,204.1" fill="none" stroke="var(--chart-borrow)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M44.0,16.0 L57.5,122.1 L71.1,145.0 L84.6,77.2 L98.2,112.5 L111.7,69.5 L125.2,135.7 L138.8,16.0 L152.3,133.4 L165.9,151.5 L179.4,151.7 L193.0,151.3 L206.5,153.3 L220.0,156.8 L233.6,160.0 L247.1,154.7 L260.7,151.5 L274.2,145.6 L287.7,146.9 L301.3,97.3 L314.8,135.1 L328.4,151.0 L341.9,137.1 L355.4,141.7 L369.0,16.0 L382.5,139.8 L396.1,142.7 L409.6,152.6 L423.1,150.2 L436.7,150.1 L450.2,163.2 L463.8,166.2 L477.3,148.5 L490.9,156.1 L504.4,155.4 L517.9,146.7 L531.5,134.3 L545.0,152.5 L558.6,151.8 L572.1,156.8 L585.6,149.6 L599.2,155.6 L612.7,156.7 L626.3,151.4 L639.8,160.6 L653.3,154.4 L666.9,153.8 L680.4,135.2 L694.0,154.6 L707.5,150.0 L721.1,135.4 L734.6,154.4 L748.1,125.0 L761.7,154.0 L775.2,138.7 L788.8,146.2 L802.3,16.0 L815.8,148.3 L829.4,123.5" fill="none" stroke="var(--chart-yield)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M44.0,148.8 L57.5,146.7 L71.1,146.5 L84.6,144.4 L98.2,142.9 L111.7,141.5 L125.2,140.2 L138.8,137.2 L152.3,135.5 L165.9,134.8 L179.4,134.3 L193.0,133.5 L206.5,133.1 L220.0,132.1 L233.6,131.6 L247.1,131.2 L260.7,130.4 L274.2,130.6 L287.7,131.4 L301.3,130.6 L314.8,130.2 L328.4,130.3 L341.9,130.4 L355.4,130.4 L369.0,128.1 L382.5,126.8 L396.1,126.0 L409.6,125.5 L423.1,125.1 L436.7,124.6 L450.2,131.6 L463.8,134.0 L477.3,133.8 L490.9,135.9 L504.4,137.1 L517.9,137.5 L531.5,139.1 L545.0,141.8 L558.6,143.4 L572.1,143.5 L585.6,143.8 L599.2,144.2 L612.7,144.0 L626.3,143.7 L639.8,143.5 L653.3,143.0 L666.9,142.5 L680.4,142.6 L694.0,142.8 L707.5,144.2 L721.1,145.0 L734.6,145.2 L748.1,145.5 L761.7,146.0 L775.2,148.0 L788.8,148.7 L802.3,147.4 L815.8,146.9 L829.4,146.0" fill="none" stroke="var(--chart-yield)" stroke-width="1.25" stroke-dasharray="5 4" opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="830.0" cy="204.1" r="4" fill="var(--chart-borrow)" stroke="var(--surface)" stroke-width="2"/>
+      <circle cx="829.4" cy="123.5" r="4" fill="var(--chart-yield)" stroke="var(--surface)" stroke-width="2"/>
+      <text x="822.0" y="204.1" text-anchor="end" dominant-baseline="middle" class="chart-endlabel" fill="var(--chart-borrow)">3.63%</text>
+      <text x="821.4" y="123.5" text-anchor="end" dominant-baseline="middle" class="chart-endlabel" fill="var(--chart-yield)">8.07%</text>
       <rect id="hoverRect" x="44" y="16" width="786" height="254" fill="transparent"/>
       <line id="crosshair" x1="0" y1="16" x2="0" y2="270" class="chart-crosshair" visibility="hidden"/>
     </svg>
@@ -927,12 +927,12 @@
       <table class="data">
         <thead><tr><th>Leg</th><th>Amount</th><th>USD</th><th>APY</th></tr></thead>
         <tbody>
-          <tr><td>Collateral · lsETH</td><td>14.4668</td><td>$34,318</td><td>—</td></tr>
-          <tr><td>Borrow · USDC</td><td>21,845.20</td><td>$21,844</td><td>3.61%</td></tr>
-          <tr><td>Deposit · KPK USDC Yield</td><td>21,868.02</td><td>$21,864</td><td>9.05%</td></tr>
-          <tr><td>Live LTV</td><td>63.65%</td><td>—</td><td>—</td></tr>
-          <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+3.46%</td></tr>
-          <tr><td>Carry at live LTV, net of 10% fee</td><td>—</td><td>—</td><td>+2.06%</td></tr>
+          <tr><td>Collateral · lsETH</td><td>14.4668</td><td>$36,528</td><td>—</td></tr>
+          <tr><td>Borrow · USDC</td><td>23,323.14</td><td>$23,318</td><td>3.63%</td></tr>
+          <tr><td>Deposit · KPK USDC Yield</td><td>23,346.60</td><td>$23,339</td><td>6.25%</td></tr>
+          <tr><td>Live LTV</td><td>63.84%</td><td>—</td><td>—</td></tr>
+          <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+1.67%</td></tr>
+          <tr><td>Carry at live LTV, net of 10% fee</td><td>—</td><td>—</td><td>+2.20%</td></tr>
         </tbody>
       </table>
     </div>
@@ -951,7 +951,8 @@
       <table class="data">
         <thead><tr><th>Date</th><th>Borrow APY</th><th>Yield APY</th><th>Delta</th></tr></thead>
         <tbody>
-          <tr><td>2026-08-19</td><td>3.61%</td><td>6.71%</td><td>+3.09 pp</td></tr>
+          <tr><td>2026-08-20</td><td>3.63%</td><td>8.07%</td><td>+4.44 pp</td></tr>
+<tr><td>2026-08-19</td><td>3.64%</td><td>6.71%</td><td>+3.07 pp</td></tr>
 <tr><td>2026-08-18</td><td>3.64%</td><td>15.18%</td><td>+11.54 pp</td></tr>
 <tr><td>2026-08-17</td><td>3.65%</td><td>6.82%</td><td>+3.18 pp</td></tr>
 <tr><td>2026-08-16</td><td>3.60%</td><td>7.24%</td><td>+3.64 pp</td></tr>
@@ -1045,8 +1046,8 @@
   // LTV sensitivity. Carry = spread x LTV, with the spread held at its live
   // value -- see the on-page caveat: real spreads compress as LTV rises, so the
   // high end is an upper bound.
-  var SPREAD = 3.599340;   // mutable: the spread picker reassigns this
-  var LIVE_LTV = 63.6511;
+  var SPREAD = 3.825375;   // mutable: the spread picker reassigns this
+  var LIVE_LTV = 63.8363;
   var LLTV = 86.00;
   // Must match the CSS gradient stops. Four bands: green to SAFE_MAX, olive
   // through the 75% operating target, orange above it, red near liquidation.
@@ -1132,7 +1133,7 @@
     document.getElementById('mathCarry').textContent = txt;
     document.getElementById('perUnitLtv').textContent = ltv.toFixed(0);
 
-    var perUnit = 2372.1901 * ltv / 100;
+    var perUnit = 2524.9382 * ltv / 100;
     var money = perUnit.toLocaleString(undefined, { maximumFractionDigits: 0 });
     document.getElementById('perUnitBorrow').textContent = money;
     document.getElementById('perUnitDeposit').textContent = money;
@@ -1226,9 +1227,9 @@
 
 <script>
 (function() {
-  var borrow = [[1782172800, 3.9008], [1782259200, 4.0519], [1782345600, 4.0519], [1782432000, 4.052], [1782518400, 4.052], [1782604800, 4.052], [1782691200, 4.052], [1782777600, 4.0381], [1782864000, 4.037], [1782950400, 4.036], [1783036800, 4.0349], [1783123200, 4.0338], [1783209600, 4.0328], [1783296000, 4.0317], [1783382400, 4.0306], [1783468800, 4.0295], [1783555200, 4.0285], [1783641600, 4.0274], [1783728000, 4.0263], [1783814400, 4.0253], [1783900800, 4.0242], [1783987200, 4.0231], [1784073600, 4.0221], [1784160000, 4.021], [1784246400, 4.0199], [1784332800, 4.0189], [1784419200, 4.0178], [1784505600, 4.0167], [1784592000, 4.0157], [1784678400, 4.0146], [1784764800, 4.0135], [1784851200, 4.0125], [1784937600, 4.0114], [1785024000, 4.0104], [1785110400, 4.0093], [1785196800, 4.0082], [1785283200, 4.0072], [1785369600, 4.0061], [1785456000, 4.005], [1785542400, 4.004], [1785628800, 4.0029], [1785715200, 4.0019], [1785801600, 4.0008], [1785888000, 3.8107], [1785974400, 3.7978], [1786060800, 3.7849], [1786147200, 3.7721], [1786233600, 3.7593], [1786320000, 3.7467], [1786406400, 3.8078], [1786492800, 3.6887], [1786579200, 3.6757], [1786665600, 3.6628], [1786752000, 3.6149], [1786838400, 3.6023], [1786924800, 3.6465], [1787011200, 3.6414], [1787097600, 3.6364], [1787169947, 3.615]];
-  var yieldp = [[1782172800, 24.9289], [1782259200, 8.1528], [1782345600, 6.8918], [1782432000, 10.6277], [1782518400, 8.6784], [1782604800, 11.0534], [1782691200, 7.4001], [1782777600, 15.3807], [1782864000, 7.5275], [1782950400, 6.5291], [1783036800, 6.522], [1783123200, 6.5414], [1783209600, 6.4296], [1783296000, 6.2368], [1783382400, 6.0631], [1783468800, 6.3551], [1783555200, 6.5321], [1783641600, 6.8554], [1783728000, 6.7872], [1783814400, 9.5182], [1783900800, 7.4377], [1783987200, 6.5611], [1784073600, 7.3262], [1784160000, 7.0734], [1784246400, 14.4561], [1784332800, 7.1762], [1784419200, 7.0151], [1784505600, 6.4703], [1784592000, 6.6044], [1784678400, 6.6104], [1784764800, 5.889], [1784851200, 5.7198], [1784937600, 6.6976], [1785024000, 6.2757], [1785110400, 6.3181], [1785196800, 6.7982], [1785283200, 7.4819], [1785369600, 6.4758], [1785456000, 6.517], [1785542400, 6.2414], [1785628800, 6.6366], [1785715200, 6.3042], [1785801600, 6.2462], [1785888000, 6.5351], [1785974400, 6.0294], [1786060800, 6.37], [1786147200, 6.4069], [1786233600, 7.4307], [1786320000, 6.3613], [1786406400, 6.612], [1786492800, 7.419], [1786579200, 6.3707], [1786665600, 7.9928], [1786752000, 6.3921], [1786838400, 7.2375], [1786924800, 6.8245], [1787011200, 15.1771], [1787097600, 6.7084]];
-  var scale = { x0: 1782172800, x1: 1787169947, padL: 44, plotW: 786 };
+  var borrow = [[1782172800, 3.9008], [1782259200, 4.0519], [1782345600, 4.0519], [1782432000, 4.052], [1782518400, 4.052], [1782604800, 4.052], [1782691200, 4.052], [1782777600, 4.0381], [1782864000, 4.037], [1782950400, 4.036], [1783036800, 4.0349], [1783123200, 4.0338], [1783209600, 4.0328], [1783296000, 4.0317], [1783382400, 4.0306], [1783468800, 4.0295], [1783555200, 4.0285], [1783641600, 4.0274], [1783728000, 4.0263], [1783814400, 4.0253], [1783900800, 4.0242], [1783987200, 4.0231], [1784073600, 4.0221], [1784160000, 4.021], [1784246400, 4.0199], [1784332800, 4.0189], [1784419200, 4.0178], [1784505600, 4.0167], [1784592000, 4.0157], [1784678400, 4.0146], [1784764800, 4.0135], [1784851200, 4.0125], [1784937600, 4.0114], [1785024000, 4.0104], [1785110400, 4.0093], [1785196800, 4.0082], [1785283200, 4.0072], [1785369600, 4.0061], [1785456000, 4.005], [1785542400, 4.004], [1785628800, 4.0029], [1785715200, 4.0019], [1785801600, 4.0008], [1785888000, 3.8107], [1785974400, 3.7978], [1786060800, 3.7849], [1786147200, 3.7721], [1786233600, 3.7593], [1786320000, 3.7467], [1786406400, 3.8078], [1786492800, 3.6887], [1786579200, 3.6757], [1786665600, 3.6628], [1786752000, 3.6149], [1786838400, 3.6023], [1786924800, 3.6465], [1787011200, 3.6414], [1787097600, 3.6364], [1787184000, 3.6329], [1787187947, 3.6327]];
+  var yieldp = [[1782172800, 24.9289], [1782259200, 8.1528], [1782345600, 6.8918], [1782432000, 10.6277], [1782518400, 8.6784], [1782604800, 11.0534], [1782691200, 7.4001], [1782777600, 15.3807], [1782864000, 7.5275], [1782950400, 6.5291], [1783036800, 6.522], [1783123200, 6.5414], [1783209600, 6.4296], [1783296000, 6.2368], [1783382400, 6.0631], [1783468800, 6.3551], [1783555200, 6.5321], [1783641600, 6.8554], [1783728000, 6.7872], [1783814400, 9.5182], [1783900800, 7.4377], [1783987200, 6.5611], [1784073600, 7.3262], [1784160000, 7.0734], [1784246400, 14.4561], [1784332800, 7.1762], [1784419200, 7.0151], [1784505600, 6.4703], [1784592000, 6.6044], [1784678400, 6.6104], [1784764800, 5.889], [1784851200, 5.7198], [1784937600, 6.6976], [1785024000, 6.2757], [1785110400, 6.3181], [1785196800, 6.7982], [1785283200, 7.4819], [1785369600, 6.4758], [1785456000, 6.517], [1785542400, 6.2414], [1785628800, 6.6366], [1785715200, 6.3042], [1785801600, 6.2462], [1785888000, 6.5351], [1785974400, 6.0294], [1786060800, 6.37], [1786147200, 6.4069], [1786233600, 7.4307], [1786320000, 6.3613], [1786406400, 6.612], [1786492800, 7.419], [1786579200, 6.3707], [1786665600, 7.9928], [1786752000, 6.3921], [1786838400, 7.2375], [1786924800, 6.8245], [1787011200, 15.1771], [1787097600, 6.7084], [1787184000, 8.0725]];
+  var scale = { x0: 1782172800, x1: 1787187947, padL: 44, plotW: 786 };
   var svg = document.querySelector('.chart-svg');
   var rect = document.getElementById('hoverRect');
   var crosshair = document.getElementById('crosshair');
