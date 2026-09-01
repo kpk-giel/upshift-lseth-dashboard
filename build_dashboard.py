@@ -364,6 +364,23 @@ else:
 
 market_url = "https://app.morpho.org/ethereum/market/0xfb7d54e0ce71efc8fffd3f4e1db0afa9265882da5cc76604b62adfac64501e80/lseth-usdc"
 vault_url = "https://app.morpho.org/ethereum/vault/0xD5cCe260E7a755DDf0Fb9cdF06443d593AaeaA13"
+rwa_url = "https://app.morpho.org/ethereum/vault/0x7a72bcD2c3F7F7e4D6679170a0625bAB15D7DDa1"
+
+# Deposit split across the two deploy vaults, from the tracker's per-vault detail.
+# Falls back to 100/0 if the position ever consolidates back to one vault.
+_pv = {v["vault"]: v for v in dep.get("vaults", [])}
+_yield_v = next((v for v in dep.get("vaults", []) if "RWA" not in v["vault"]), None)
+_rwa_v = next((v for v in dep.get("vaults", []) if "RWA" in v["vault"]), None)
+yield_w = (_yield_v["weight"] * 100) if _yield_v else 100.0
+rwa_w = (_rwa_v["weight"] * 100) if _rwa_v else 0.0
+
+# Per-vault rows for the live-position table.
+deposit_rows = "\n          ".join(
+    f"<tr><td>Deposit · {'KPK USDC Yield RWA' if 'RWA' in v['vault'] else 'KPK USDC Yield'}"
+    f"</td><td>{v['amount']:,.2f}</td><td>${v['usd']:,.0f}</td>"
+    f"<td>{v['apy_pct']:.2f}%</td></tr>"
+    for v in dep.get("vaults", [])
+)
 debank_url = f"https://debank.com/profile/{wallet}"
 # Phase 1 carry backtest -- public Dune query behind the 2.11% cross-check.
 backtest_url = "https://dune.com/queries/8163239"
@@ -1057,10 +1074,10 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   <div>
     <h1>lsETH carry position <span class="pill live-pill">● live pilot</span></h1>
     <div class="subhead">
-      Borrow USDC against lsETH on Morpho, redeploy it into KPK USDC Morpho
+      Borrow USDC against lsETH on Morpho, redeploy it across KPK's USDC Morpho
       vaults, and keep the spread — extra yield on lsETH you were holding anyway.
-      Running live since 4 Aug 2026 as a small proof-of-concept position, at
-      {ltv:.0f}% LTV — the top of the pre-automation band.
+      Live since 4 Aug 2026 as a small proof-of-concept position, now running at
+      the <b>{ltv:.0f}% production LTV target</b> after a staged ramp.
     </div>
   </div>
 
@@ -1103,10 +1120,12 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
       </div>
       <div class="arrow">→</div>
       <div class="leg yield">
-        <div class="leg-kind">Deposit · <a href="{vault_url}" target="_blank" rel="noopener">KPK USDC Yield ↗</a></div>
+        <div class="leg-kind">Deposit ·
+          <a href="{vault_url}" target="_blank" rel="noopener">USDC Yield ↗</a> +
+          <a href="{rwa_url}" target="_blank" rel="noopener">Yield RWA ↗</a></div>
         <div class="leg-amount"><span id="perUnitDeposit">{per_unit_borrow:,.0f}</span> USDC</div>
-        <div class="leg-usd">redeployed in full</div>
-        <div class="leg-apy">+{dep['apy_pct']:.2f}% earned (spot, net of fees)</div>
+        <div class="leg-usd">split ~{yield_w:.0f}/{rwa_w:.0f} across the two vaults</div>
+        <div class="leg-apy">+{dep['apy_pct']:.2f}% earned (blended spot, net of fees)</div>
       </div>
     </div>
     <div class="per-unit-note">
@@ -1189,16 +1208,18 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
     <div class="callout-mark" aria-hidden="true">!</div>
     <div>
       <div class="callout-title">
-        Running at {ltv:.0f}% LTV — the top of the pre-automation band; ~75% is next
+        Running at the {ltv:.0f}% production LTV target since 27 Aug
       </div>
       <div class="callout-body">
-        The position is held in band automatically: live rebalancing and
-        anti-liquidation automations re-lever on strength and de-risk on weakness
-        around this level. As they build a longer track record the target moves to
-        <b>~75%</b>, where the same structure yields <b>+{carry_at_target:.2f}%</b>
-        on the current spread — drag the slider above to see any point in between.
-        Position size is a deliberately small pilot: the carry is a percentage, so
-        it is the same at this size or at scale.
+        The ramp is complete: ~45% at launch, ~65% from 10 Aug, and the <b>~75%
+        production target</b> since 27 Aug — each step gated on the rebalancing and
+        liquidation-protection agents banking live track record at the previous
+        level. The position is held at this level automatically: the agents
+        re-lever on strength and de-risk on weakness around it. The borrowed USDC
+        is split across <b>two</b> KPK vaults (USDC Yield + USDC Yield RWA,
+        ~{yield_w:.0f}/{rwa_w:.0f}), so the deposit APY shown is the blend of where
+        the money actually sits. Position size is a deliberately small pilot: the
+        carry is a percentage, so it is the same at this size or at scale.
       </div>
     </div>
   </div>
@@ -1221,7 +1242,9 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   <div>
     <div class="section-title">Full history</div>
     <div class="section-note">
-      Daily borrow rate (lsETH/USDC market) vs. net lend rate (KPK USDC Yield),
+      Daily borrow rate (lsETH/USDC market) vs. net lend rate (KPK USDC Yield,
+      the primary deploy vault — since 27 Aug the deposit is split with USDC Yield
+      RWA, whose rate runs within ~20bps of it),
       since the market went live on {since_date}. {entry_sentence}
       Solid lines are the daily rates — the variation is real and drives realized
       performance. The dashed line is the vault's 30-day trend: its lend rate is
@@ -1254,7 +1277,8 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
         <tbody>
           <tr><td>Collateral · lsETH</td><td>{coll['amount']:.4f}</td><td>${coll['usd']:,.0f}</td><td>—</td></tr>
           <tr><td>Borrow · USDC</td><td>{borrow['amount']:,.2f}</td><td>${borrow['usd']:,.0f}</td><td>{borrow['apy_pct']:.2f}%</td></tr>
-          <tr><td>Deposit · KPK USDC Yield</td><td>{dep['amount']:,.2f}</td><td>${dep['usd']:,.0f}</td><td>{dep['apy_pct']:.2f}%</td></tr>
+          {deposit_rows}
+          <tr><td>Deposit · combined</td><td>{dep['amount']:,.2f}</td><td>${dep['usd']:,.0f}</td><td>{dep['apy_pct']:.2f}% blended</td></tr>
           <tr><td>Live LTV</td><td>{ltv:.2f}%</td><td>—</td><td>—</td></tr>
           <tr><td>Carry at live LTV, gross</td><td>—</td><td>—</td><td>+{net_lseth:.2f}%</td></tr>
           <tr><td>Carry at live LTV, net of 10% fee</td><td>—</td><td>—</td><td>+{net_lseth_after_fee:.2f}%</td></tr>
@@ -1325,21 +1349,24 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   var slider = document.getElementById('ltvSlider');
   if (!slider) return;
 
-  // Reference marks on the LTV axis: where we are, the pre-automation safe band,
-  // the post-automation target, and the liquidation line.
+  // Reference marks on the LTV axis. The liquidation threshold is the red end of
+  // the track itself, labelled once to the right of the scale, so it needs no mark.
   var MARKS = [
-    // Only three marks: at any realistic width a fourth at LLTV collides with
-    // the 75% target (they sit 11 LTV points apart on an 86-point scale). The
-    // liquidation threshold is instead the red end of the track itself, labelled
-    // once to the right of the scale.
     {{ ltv: LIVE_LTV, label: 'live ' + LIVE_LTV.toFixed(0) + '%' }},
     {{ ltv: 62.5, label: 'band 60–65%', optional: true }},
-    {{ ltv: 75, label: 'target 75%', emphasis: true }}
+    {{ ltv: 75, label: 'target 75%', emphasis: true, optional: true }}
   ].filter(function(m) {{
-    // Drop the band marker when the live mark sits on top of it (the position now
-    // runs inside the band, so the two labels would overlap and say the same thing).
+    // Drop any contextual mark the live mark sits on top of. The position now runs
+    // AT the 75% production target, so most days the target mark would print
+    // directly under the live one; when they part (the HF band lets LTV breathe a
+    // point or two either side), the target mark comes back on its own.
     return !(m.optional && Math.abs(m.ltv - LIVE_LTV) < 6);
   }});
+  // When live sits on the target, say so on the live mark instead.
+  if (Math.abs(LIVE_LTV - 75) < 6) {{
+    MARKS[0].label = 'live ' + LIVE_LTV.toFixed(0) + '% (target)';
+    MARKS[0].emphasis = true;
+  }}
   var scale = document.getElementById('ltvScale');
   var markEls = [];
   MARKS.forEach(function(m) {{

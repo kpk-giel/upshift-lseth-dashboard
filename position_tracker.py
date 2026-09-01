@@ -27,6 +27,11 @@ MORPHO_GRAPHQL = "https://api.morpho.org/graphql"
 DEFAULT_WALLET = "0x15d869A5a117480FF219d6dC62a42C794cbAcCba"
 LSETH_USDC_MARKET_ID = "0xfb7d54e0ce71efc8fffd3f4e1db0afa9265882da5cc76604b62adfac64501e80"
 USDC_YIELD_VAULT = "0xD5cCe260E7a755DDf0Fb9cdF06443d593AaeaA13"
+# Second deploy vault since 2026-08-27: the borrowed USDC is split across USDC
+# Yield and USDC Yield RWA (target 60/40; the realised split floats with each
+# vault's caps and liquidity). The deposit leg below is the AGGREGATE of both,
+# with APYs blended by the actual allocation.
+USDC_YIELD_RWA_VAULT = "0x7a72bcD2c3F7F7e4D6679170a0625bAB15D7DDa1"
 
 HISTORY_QUERY = """
 query($marketId: String!, $vault: String!, $chainId: Int!, $opts: TimeseriesOptions!) {
@@ -109,17 +114,18 @@ def fetch_position(wallet: str = DEFAULT_WALLET) -> dict:
         (p for p in data["marketPositions"] if p["market"]["marketId"] == LSETH_USDC_MARKET_ID),
         None,
     )
-    vault_pos = next(
-        (p for p in data["vaultV2Positions"] if p["vault"]["address"].lower() == USDC_YIELD_VAULT.lower()),
-        None,
-    )
-    if market_pos is None or vault_pos is None:
+    deploy_addrs = {USDC_YIELD_VAULT.lower(), USDC_YIELD_RWA_VAULT.lower()}
+    vault_positions = [
+        p for p in data["vaultV2Positions"]
+        if p["vault"]["address"].lower() in deploy_addrs and int(p["assets"]) > 0
+    ]
+    if market_pos is None or not vault_positions:
         return {
             "wallet": wallet,
             "error": (
                 f"missing {'market' if market_pos is None else ''}"
-                f"{' + ' if market_pos is None and vault_pos is None else ''}"
-                f"{'vault' if vault_pos is None else ''} position for this wallet"
+                f"{' + ' if market_pos is None and not vault_positions else ''}"
+                f"{'vault' if not vault_positions else ''} position for this wallet"
             ),
         }
 
@@ -130,9 +136,40 @@ def fetch_position(wallet: str = DEFAULT_WALLET) -> dict:
     borrow_usd = m["state"]["borrowAssetsUsd"]
     borrow_apy_pct = m["state"]["borrowApy"] * 100
 
-    deposit_usdc = vault_pos["assets"] / 10 ** vault_pos["vault"]["asset"]["decimals"]
-    deposit_usd = vault_pos["assetsUsd"]
-    vault_apy_pct = vault_pos["vault"]["netApy"] * 100
+    # Deposit leg: aggregate across both deploy vaults, APY weighted by where the
+    # money actually sits. A plain average would misstate the leg whenever the
+    # split drifts from 50/50 (it runs ~64/36).
+    per_vault = []
+    deposit_usdc = deposit_usd = 0.0
+    for p in vault_positions:
+        amt = int(p["assets"]) / 10 ** p["vault"]["asset"]["decimals"]
+        deposit_usdc += amt
+        deposit_usd += p["assetsUsd"]
+        per_vault.append({
+            "vault": p["vault"]["symbol"],
+            "address": p["vault"]["address"],
+            "amount": amt,
+            "usd": p["assetsUsd"],
+            "apy_pct": (p["vault"]["netApy"] or 0) * 100,
+        })
+    for v in per_vault:
+        v["weight"] = v["amount"] / deposit_usdc if deposit_usdc else 0.0
+
+    def _blend(key):
+        """Allocation-weighted blend of a vault APY field, renormalised over the
+        vaults that actually report it (the RWA vault is young, so its longer
+        trailing windows can be null)."""
+        num = den = 0.0
+        for p in vault_positions:
+            val = p["vault"].get(key)
+            if val is None:
+                continue
+            w = int(p["assets"]) / 10 ** p["vault"]["asset"]["decimals"]
+            num += w * val
+            den += w
+        return (num / den) if den else None
+
+    vault_apy_pct = (_blend("netApy") or 0) * 100
 
     ltv_pct = (borrow_usd / collateral_usd * 100) if collateral_usd else None
     delta_apy_pp = vault_apy_pct - borrow_apy_pct
@@ -150,7 +187,13 @@ def fetch_position(wallet: str = DEFAULT_WALLET) -> dict:
     # the vault's realized avgNetApy with the market's borrow APY over the SAME
     # window. Mixing horizons (e.g. 30d vault vs spot borrow) would fabricate a
     # spread neither leg ever earned.
-    vs, mstate = vault_pos["vault"], m["state"]
+    # Deposit-side APYs are the allocation-weighted blend across both deploy
+    # vaults. Caveat, stated rather than hidden: trailing windows are blended with
+    # TODAY'S weights, because per-hour historical weights are not available from
+    # this API. Before 2026-08-27 all funds sat in USDC Yield, so a 30d blend
+    # slightly misweights the pre-split stretch; with the two vaults ~16bps apart
+    # the error is under 6bps and shrinks daily as the split ages.
+    mstate = m["state"]
 
     def _spread(vault_apy, borrow_apy):
         if vault_apy is None or borrow_apy is None:
@@ -159,9 +202,9 @@ def fetch_position(wallet: str = DEFAULT_WALLET) -> dict:
 
     spreads = {
         "spot": delta_apy_pp,
-        "1d": _spread(vs.get("avgNetApy1d"), mstate.get("dailyBorrowApy")),
-        "7d": _spread(vs.get("avgNetApy7d"), mstate.get("weeklyBorrowApy")),
-        "30d": _spread(vs.get("avgNetApy30d"), mstate.get("monthlyBorrowApy")),
+        "1d": _spread(_blend("avgNetApy1d"), mstate.get("dailyBorrowApy")),
+        "7d": _spread(_blend("avgNetApy7d"), mstate.get("weeklyBorrowApy")),
+        "30d": _spread(_blend("avgNetApy30d"), mstate.get("monthlyBorrowApy")),
     }
 
     # The individual legs per horizon, so a UI switching horizons can show the
@@ -169,7 +212,7 @@ def fetch_position(wallet: str = DEFAULT_WALLET) -> dict:
     # Showing a spot yield minus a spot borrow next to a 30d spread produces an
     # equation that visibly doesn't add up.
     def _pair(vault_key, borrow_key):
-        v, b = vs.get(vault_key), mstate.get(borrow_key)
+        v, b = _blend(vault_key), mstate.get(borrow_key)
         if v is None or b is None:
             return None
         return {"yield_pct": v * 100, "borrow_pct": b * 100}
@@ -200,8 +243,10 @@ def fetch_position(wallet: str = DEFAULT_WALLET) -> dict:
         },
         "borrow": {"asset": "USDC", "amount": borrow_usdc, "usd": borrow_usd, "apy_pct": borrow_apy_pct},
         "deposit": {
-            "vault": vault_pos["vault"]["symbol"], "asset": "USDC",
+            "vault": "KPK USDC vaults" if len(per_vault) > 1 else per_vault[0]["vault"],
+            "asset": "USDC",
             "amount": deposit_usdc, "usd": deposit_usd, "apy_pct": vault_apy_pct,
+            "vaults": per_vault,
         },
         "ltv_pct": ltv_pct,
         "lltv_pct": lltv_pct,
