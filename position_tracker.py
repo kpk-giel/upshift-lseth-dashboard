@@ -34,7 +34,7 @@ USDC_YIELD_VAULT = "0xD5cCe260E7a755DDf0Fb9cdF06443d593AaeaA13"
 USDC_YIELD_RWA_VAULT = "0x7a72bcD2c3F7F7e4D6679170a0625bAB15D7DDa1"
 
 HISTORY_QUERY = """
-query($marketId: String!, $vault: String!, $chainId: Int!, $opts: TimeseriesOptions!) {
+query($marketId: String!, $vault: String!, $rwaVault: String!, $chainId: Int!, $opts: TimeseriesOptions!) {
   marketById(marketId: $marketId, chainId: $chainId) {
     creationTimestamp
     historicalState {
@@ -46,6 +46,11 @@ query($marketId: String!, $vault: String!, $chainId: Int!, $opts: TimeseriesOpti
     historicalState {
       avgNetApy(options: $opts) { x y }
       sharePrice(options: $opts) { x y }
+    }
+  }
+  rwa: vaultV2ByAddress(address: $rwaVault, chainId: $chainId) {
+    historicalState {
+      avgNetApy(options: $opts) { x y }
     }
   }
 }
@@ -392,9 +397,10 @@ def fetch_peer_borrow_rates() -> dict:
 
 def fetch_apy_history(interval: str = "DAY") -> dict:
     """Daily (or --interval) borrow APY on the lsETH/USDC market and net APY
-    on KPK USDC Yield, for the full life of the market -- it's younger than
-    the vault, so its creation is the natural start of "full history" for
-    this position. Points come back newest-first; re-sorted ascending here."""
+    on both deploy vaults (KPK USDC Yield + KPK USDC Yield RWA), for the full
+    life of the market -- it's younger than the Yield vault, so its creation is
+    the natural start of "full history" for this position. Points come back
+    newest-first; re-sorted ascending here."""
     now = int(time.time())
     # Two-call bootstrap: the market's own creationTimestamp sets the window
     # start, so this doesn't need the value hardcoded and re-derives cleanly
@@ -416,7 +422,8 @@ def fetch_apy_history(interval: str = "DAY") -> dict:
         "interval": interval,
     }
     data = _post(HISTORY_QUERY, {
-        "marketId": LSETH_USDC_MARKET_ID, "vault": USDC_YIELD_VAULT, "chainId": 1, "opts": opts,
+        "marketId": LSETH_USDC_MARKET_ID, "vault": USDC_YIELD_VAULT,
+        "rwaVault": USDC_YIELD_RWA_VAULT, "chainId": 1, "opts": opts,
     })
 
     def _series(points):
@@ -438,6 +445,9 @@ def fetch_apy_history(interval: str = "DAY") -> dict:
         "since": creation,
         "borrow_apy_pct": _from_creation(_series(market_hist["borrowApy"])),
         "yield_apy_pct": _from_creation(_series(vault_hist["avgNetApy"])),
+        # The second deploy vault (launched 2026-07-28, in this position since
+        # 2026-08-27). Its series simply starts when the vault does; no padding.
+        "rwa_apy_pct": _from_creation(_series(data["rwa"]["historicalState"]["avgNetApy"])),
         "borrow_apy_30d_pct": _from_creation(_series(market_hist["monthlyBorrowApy"])),
         "yield_apy_30d_pct": _from_creation(
             _share_price_apy(vault_hist["sharePrice"], window_days=trend_window)

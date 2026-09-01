@@ -40,6 +40,9 @@ def percentile(values, pct):
 def build_chart(hist, start=None):
     borrow = hist["borrow_apy_pct"]
     yieldp = hist["yield_apy_pct"]
+    # Second deploy vault; empty until its launch date, so every use below
+    # guards on it and the chart degrades to the two-line version cleanly.
+    rwap = hist.get("rwa_apy_pct") or []
 
     x0, x1 = min(borrow[0]["t"], yieldp[0]["t"]), max(borrow[-1]["t"], yieldp[-1]["t"])
 
@@ -50,7 +53,7 @@ def build_chart(hist, start=None):
     # regardless of exactly how long the noisy stretch turns out to be, no
     # hardcoded day count. True values still render/label/tooltip correctly;
     # see the clipped-point annotation below.
-    y_max_core = max(max(p["y"] for p in borrow), percentile([p["y"] for p in yieldp], 90))
+    y_max_core = max(max(p["y"] for p in borrow), percentile([p["y"] for p in yieldp] + [p["y"] for p in rwap], 90))
     step = nice_step(y_max_core * 1.15)
     y_max = step * (int(y_max_core * 1.15 / step) + 1)
     y_min = 0
@@ -82,7 +85,7 @@ def build_chart(hist, start=None):
         t = x0 + (x1 - x0) * i / 4
         x_ticks.append((sx(t), datetime.fromtimestamp(t, tz=timezone.utc).strftime("%b %-d")))
 
-    clipped = [p for p in yieldp if p["y"] > y_max]
+    clipped = [p for p in yieldp + rwap if p["y"] > y_max]
     annotation = ""
     if clipped:
         peak = max(clipped, key=lambda p: p["y"])
@@ -96,8 +99,8 @@ def build_chart(hist, start=None):
         # derived APY, which a short lookback amplifies. State what is observed.
         label = (
             f"{len(clipped)} day(s) above {y_max:g}% ({span_start}–{span_end}), "
-            f"peak {peak['y']:.0f}% — single-day spikes in share-price-derived "
-            f"APY; capped for readability"
+            f"peak {peak['y']:.0f}% — single-day spikes in vault APY series; "
+            f"capped for readability"
         )
         annotation = (
             f'<g class="chart-annot">'
@@ -149,10 +152,28 @@ def build_chart(hist, start=None):
 
     borrow_end = borrow[-1]
     yield_end = yieldp[-1]
-    ey_b, ey_y = sy(borrow_end["y"]), sy(yield_end["y"])
-    if abs(ey_b - ey_y) < 16:
-        mid = (ey_b + ey_y) / 2
-        ey_b, ey_y = mid - 8, mid + 8
+    rwa_end = rwap[-1] if rwap else None
+    # Spread the end labels at least 16px apart, preserving their value order,
+    # so two or three near-equal rates never overprint each other.
+    ends = {"b": sy(borrow_end["y"]), "y": sy(yield_end["y"])}
+    if rwa_end:
+        ends["r"] = sy(rwa_end["y"])
+    order = sorted(ends, key=lambda k: ends[k])
+    for i in range(1, len(order)):
+        if ends[order[i]] - ends[order[i - 1]] < 16:
+            ends[order[i]] = ends[order[i - 1]] + 16
+    ey_b, ey_y = ends["b"], ends["y"]
+    ey_r = ends.get("r")
+
+    rwa_svg = ""
+    if rwa_end:
+        rwa_svg = (
+            f'<path d="{path_for(rwap)}" fill="none" stroke="var(--chart-rwa)" '
+            f'stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+            f'<circle cx="{sx(rwa_end["t"]):.1f}" cy="{ey_r:.1f}" r="4" fill="var(--chart-rwa)" stroke="var(--surface)" stroke-width="2"/>'
+            f'<text x="{sx(rwa_end["t"]) - 8:.1f}" y="{ey_r:.1f}" text-anchor="end" dominant-baseline="middle" '
+            f'class="chart-endlabel" fill="var(--chart-rwa)">{rwa_end["y"]:.2f}%</text>'
+        )
 
     grid_svg = "\n".join(
         f'<line x1="{pad_l}" y1="{y:.1f}" x2="{W - pad_r}" y2="{y:.1f}" class="chart-grid"/>'
@@ -165,13 +186,14 @@ def build_chart(hist, start=None):
     )
 
     svg = f"""
-    <svg viewBox="0 0 {W} {H}" class="chart-svg" role="img" aria-label="Borrow APY and Yield APY, daily, since market inception">
+    <svg viewBox="0 0 {W} {H}" class="chart-svg" role="img" aria-label="Borrow APY and deploy-vault yield APYs, daily, since market inception">
       <g>{grid_svg}</g>
       <g>{xtick_svg}</g>
       {entry_svg}
       {annotation}
       <path d="{path_for(borrow)}" fill="none" stroke="var(--chart-borrow)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
       <path d="{path_for(yieldp)}" fill="none" stroke="var(--chart-yield)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      {rwa_svg}
       {trend_paths}
       <circle cx="{sx(borrow_end['t']):.1f}" cy="{ey_b:.1f}" r="4" fill="var(--chart-borrow)" stroke="var(--surface)" stroke-width="2"/>
       <circle cx="{sx(yield_end['t']):.1f}" cy="{ey_y:.1f}" r="4" fill="var(--chart-yield)" stroke="var(--surface)" stroke-width="2"/>
@@ -192,6 +214,9 @@ def build_chart(hist, start=None):
     yield_by_date = {}
     for p in yieldp:
         yield_by_date[datetime.fromtimestamp(p["t"], tz=timezone.utc).strftime("%Y-%m-%d")] = p["y"]
+    rwa_by_date = {}
+    for p in rwap:
+        rwa_by_date[datetime.fromtimestamp(p["t"], tz=timezone.utc).strftime("%Y-%m-%d")] = p["y"]
 
     seen_dates = set()
     for p in sorted(borrow, key=lambda p: p["t"], reverse=True):
@@ -200,12 +225,14 @@ def build_chart(hist, start=None):
             continue
         seen_dates.add(d)
         yv = yield_by_date.get(d)
+        rv = rwa_by_date.get(d)
+        rcell = f"{rv:.2f}%" if rv is not None else "—"
         delta_v = (yv - p["y"]) if yv is not None else None
         table_rows.append(
             f"<tr><td>{d}</td><td>{p['y']:.2f}%</td>"
-            f"<td>{yv:.2f}%</td><td>{delta_v:+.2f} pp</td></tr>"
+            f"<td>{yv:.2f}%</td><td>{rcell}</td><td>{delta_v:+.2f} pp</td></tr>"
             if yv is not None else
-            f"<tr><td>{d}</td><td>{p['y']:.2f}%</td><td>—</td><td>—</td></tr>"
+            f"<tr><td>{d}</td><td>{p['y']:.2f}%</td><td>—</td><td>{rcell}</td><td>—</td></tr>"
         )
 
     # Left newest-first: the current rate is what a reader opening this table
@@ -213,12 +240,14 @@ def build_chart(hist, start=None):
 
     borrow_js = json.dumps([[p["t"], round(p["y"], 4)] for p in borrow])
     yield_js = json.dumps([[p["t"], round(p["y"], 4)] for p in yieldp])
+    rwa_js = json.dumps([[p["t"], round(p["y"], 4)] for p in rwap])
 
     return {
         "svg": svg,
         "table_rows": "\n".join(table_rows),
         "borrow_js": borrow_js,
         "yield_js": yield_js,
+        "rwa_js": rwa_js,
         "scale": {"x0": x0, "x1": x1, "y_min": y_min, "y_max": y_max,
                   "pad_l": pad_l, "plot_w": plot_w, "pad_t": pad_t, "plot_h": plot_h},
     }
@@ -447,6 +476,7 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
     --risk-hi: #A5122B;
     --chart-borrow: #3F97D6;
     --chart-yield: #DC5C39;
+    --chart-rwa: #2B848C;
     --radius: 18px;
     --font-ui: 'Lexend', 'Montserrat', -apple-system, sans-serif;
   }}
@@ -1242,9 +1272,9 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   <div>
     <div class="section-title">Full history</div>
     <div class="section-note">
-      Daily borrow rate (lsETH/USDC market) vs. net lend rate (KPK USDC Yield,
-      the primary deploy vault — since 27 Aug the deposit is split with USDC Yield
-      RWA, whose rate runs within ~20bps of it),
+      Daily borrow rate (lsETH/USDC market) vs. net lend rate on both deploy
+      vaults — KPK USDC Yield, and KPK USDC Yield RWA in teal, which joined the
+      position on 27 Aug at a target 60/40 split —
       since the market went live on {since_date}. {entry_sentence}
       Solid lines are the daily rates — the variation is real and drives realized
       performance. The dashed line is the vault's 30-day trend: its lend rate is
@@ -1258,12 +1288,14 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
     <div class="chart-legend">
       <span class="key"><span class="swatch" style="background:var(--chart-borrow)"></span>Borrow APY · lsETH/USDC</span>
       <span class="key"><span class="swatch" style="background:var(--chart-yield)"></span>Yield APY · KPK USDC Yield</span>
+      <span class="key"><span class="swatch" style="background:var(--chart-rwa)"></span>Yield APY · KPK USDC Yield RWA</span>
       <span class="key"><span class="swatch swatch-dash"></span>Yield · 30-day trend</span>
     </div>
     {chart['svg']}
     <div id="chartTooltip" class="chart-tooltip">
       <div class="date" id="ttDate"></div>
       <div class="row"><span class="key" style="background:var(--chart-yield)"></span>Yield<span class="val" id="ttYield"></span></div>
+      <div class="row"><span class="key" style="background:var(--chart-rwa)"></span>Yield RWA<span class="val" id="ttRwa"></span></div>
       <div class="row"><span class="key" style="background:var(--chart-borrow)"></span>Borrow<span class="val" id="ttBorrow"></span></div>
       <div class="row"><span style="width:10px"></span>Delta<span class="val" id="ttDelta"></span></div>
     </div>
@@ -1298,7 +1330,7 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
     <summary>Show daily data table</summary>
     <div class="table-scroll">
       <table class="data">
-        <thead><tr><th>Date</th><th>Borrow APY</th><th>Yield APY</th><th>Delta</th></tr></thead>
+        <thead><tr><th>Date</th><th>Borrow APY</th><th>Yield APY</th><th>RWA APY</th><th>Delta (Yield−Borrow)</th></tr></thead>
         <tbody>
           {chart['table_rows']}
         </tbody>
@@ -1523,6 +1555,7 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
 (function() {{
   var borrow = {chart['borrow_js']};
   var yieldp = {chart['yield_js']};
+  var rwap = {chart['rwa_js']};
   var scale = {{ x0: {chart['scale']['x0']}, x1: {chart['scale']['x1']}, padL: {chart['scale']['pad_l']}, plotW: {chart['scale']['plot_w']} }};
   var svg = document.querySelector('.chart-svg');
   var rect = document.getElementById('hoverRect');
@@ -1530,6 +1563,7 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   var tooltip = document.getElementById('chartTooltip');
   var elDate = document.getElementById('ttDate');
   var elYield = document.getElementById('ttYield');
+  var elRwa = document.getElementById('ttRwa');
   var elBorrow = document.getElementById('ttBorrow');
   var elDelta = document.getElementById('ttDelta');
 
@@ -1562,6 +1596,14 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
 
       elDate.textContent = fmtDate(b[0]);
       elYield.textContent = y[1].toFixed(2) + '%';
+      // RWA only exists from its launch date; the nearest() lookup would
+      // otherwise pin every earlier hover to its first point.
+      var rshow = '—';
+      if (rwap.length) {{
+        var r = nearest(rwap, t);
+        if (Math.abs(r[0] - t) < 129600) rshow = r[1].toFixed(2) + '%';
+      }}
+      elRwa.textContent = rshow;
       elBorrow.textContent = b[1].toFixed(2) + '%';
       var d = y[1] - b[1];
       elDelta.textContent = (d >= 0 ? '+' : '') + d.toFixed(2) + ' pp';
