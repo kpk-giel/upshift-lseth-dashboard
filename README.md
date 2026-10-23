@@ -5,7 +5,7 @@ supplied as collateral on Morpho, USDC borrowed against it, that USDC redeployed
 into KPK USDC Morpho vaults. Shows the borrow/lend spread, the carry it produces
 per 1 lsETH at a chosen LTV, and the full rate history.
 
-**Live page:** https://kpk-giel.github.io/upshift-lseth-dashboard/
+**Live page:** https://external.kpk.io/upshift-lseth-dashboard/ (copied from this repo every 4 hours by kpk-labs/external-resources)
 
 ## How it updates
 

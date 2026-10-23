@@ -419,9 +419,22 @@ built_epoch = int(datetime.now(timezone.utc).timestamp())
 # GitHub token with `workflow` scope embedded in a PUBLIC page -- i.e. handing
 # anyone write access to the repo -- so this hands off to GitHub's UI instead,
 # where the click is authenticated as whoever is signed in.
-actions_url = "https://github.com/kpk-giel/upshift-lseth-dashboard/actions/workflows/refresh.yml"
+actions_url = "https://github.com/kpk-labs/upshift-lseth-dashboard/actions/workflows/refresh.yml"
 
-html = f"""<title>Upshift lsETH Carry — KPK</title>
+html = f"""<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Upshift lsETH Carry — KPK</title>
+<meta property="og:title" content="Upshift lsETH Carry | KPK">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KPK">
+<meta property="og:url" content="https://external.kpk.io/upshift-lseth-dashboard/">
+<meta property="og:image" content="https://external.kpk.io/upshift-lseth-dashboard/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="KPK">
+<meta name="twitter:card" content="summary_large_image">
 <!-- Reachable by link, not discoverable by search. robots.txt asks crawlers not
      to fetch; this asks them not to index if they fetch anyway. -->
 <meta name="robots" content="noindex, nofollow">
@@ -1619,6 +1632,7 @@ html = f"""<title>Upshift lsETH Carry — KPK</title>
   }}
 }})();
 </script>
+</html>
 """
 
 OUT.write_text(html)
